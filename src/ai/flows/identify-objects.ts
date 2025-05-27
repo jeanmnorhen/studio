@@ -1,7 +1,8 @@
+
 // src/ai/flows/identify-objects.ts
 'use server';
 /**
- * @fileOverview An AI agent that identifies objects in an image.
+ * @fileOverview An AI agent (flow) that identifies objects in an image using a dedicated tool.
  *
  * - identifyObjects - A function that handles the object identification process.
  * - IdentifyObjectsInput - The input type for the identifyObjects function.
@@ -10,7 +11,9 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { identifyObjectsTool, IdentifyObjectsToolInputSchema, type IdentifyObjectsToolInput, type IdentifyObjectsToolOutput } from '@/ai/tools/image-analysis-tools';
 
+// Input schema for the flow (agent) - remains the same
 const IdentifyObjectsInputSchema = z.object({
   photoDataUri: z
     .string()
@@ -20,36 +23,62 @@ const IdentifyObjectsInputSchema = z.object({
 });
 export type IdentifyObjectsInput = z.infer<typeof IdentifyObjectsInputSchema>;
 
+// Output schema for the flow (agent) - remains the same
 const IdentifyObjectsOutputSchema = z.object({
   objects: z.array(z.string()).describe('The objects identified in the image.'),
 });
 export type IdentifyObjectsOutput = z.infer<typeof IdentifyObjectsOutputSchema>;
 
+
+// The main exported function that clients call
 export async function identifyObjects(input: IdentifyObjectsInput): Promise<IdentifyObjectsOutput> {
-  return identifyObjectsFlow(input);
+  // The flow will now internally call the tool.
+  // The input for the flow might be the same as the tool, or it could be different
+  // if the flow did some pre-processing. Here, it's the same.
+  const toolInput: IdentifyObjectsToolInput = { photoDataUri: input.photoDataUri };
+  
+  const result = await identifyObjectsAgentFlow(toolInput);
+  return result;
 }
 
-const prompt = ai.definePrompt({
-  name: 'identifyObjectsPrompt',
-  input: {schema: IdentifyObjectsInputSchema},
-  output: {schema: IdentifyObjectsOutputSchema},
-  prompt: `You are an expert AI object identifier.
+// This prompt now instructs the LLM to use the tool
+const agentPrompt = ai.definePrompt({
+  name: 'identifyObjectsAgentPrompt',
+  input: { schema: IdentifyObjectsToolInputSchema }, // The prompt expects the tool's input
+  output: { schema: IdentifyObjectsOutputSchema },   // The agent's final output schema
+  tools: [identifyObjectsTool], // Make the tool available to this prompt
+  prompt: `You are an image analysis agent. Your task is to identify objects in the provided image.
+Please use the 'identifyObjectsInImage' tool to perform this task.
+The image to analyze is: {{media url=photoDataUri}}
 
-You will analyze the image provided and identify the objects present in the image.
-
-Respond with a list of objects identified in the image.
-
-Image: {{media url=photoDataUri}}`,
+Ensure the final list of identified objects is returned.`,
 });
 
-const identifyObjectsFlow = ai.defineFlow(
+
+const identifyObjectsAgentFlow = ai.defineFlow(
   {
-    name: 'identifyObjectsFlow',
-    inputSchema: IdentifyObjectsInputSchema,
-    outputSchema: IdentifyObjectsOutputSchema,
+    name: 'identifyObjectsAgentFlow', // This is effectively our "Agent"
+    inputSchema: IdentifyObjectsToolInputSchema, // Agent flow takes tool input
+    outputSchema: IdentifyObjectsOutputSchema,   // Agent flow produces the final output
+    // tools: [identifyObjectsTool], // Tools can also be defined at flow level if not prompt specific
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  async (input: IdentifyObjectsToolInput): Promise<IdentifyObjectsOutput> => {
+    // The flow now calls the agentPrompt, which is configured to use the tool.
+    // Genkit's LLM will decide to call `identifyObjectsTool` based on the prompt.
+    const llmResponse = await agentPrompt(input); 
+    
+    // The llmResponse.output() should match IdentifyObjectsOutputSchema
+    // If the tool was called, its output is part of the LLM's reasoning process to arrive at this final output.
+    const finalOutput = llmResponse.output;
+
+    if (!finalOutput) {
+      // Handle cases where the LLM didn't produce the expected output,
+      // possibly because the tool wasn't called as expected or an error occurred.
+      console.error("IdentifyObjectsAgentFlow: LLM did not produce the expected final output.");
+      return { objects: ["Error: Could not identify objects or LLM failed to use the tool correctly."] };
+    }
+    
+    return finalOutput;
   }
 );
+
