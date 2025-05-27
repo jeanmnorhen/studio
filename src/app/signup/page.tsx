@@ -36,7 +36,7 @@ export default function SignupPage() {
 
     setIsLoading(false);
     if (result.success) {
-      router.push('/admin/dashboard'); // Redirect to dashboard after successful signup
+      router.push('/admin/agents'); // Redirecionar para o painel de agentes
     } else {
       setError(result.error);
     }

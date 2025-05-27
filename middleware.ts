@@ -3,64 +3,70 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 const AUTH_COOKIE_NAME = 'fb-studio-auth-session';
+const DEFAULT_LOGGED_IN_PAGE = '/admin/agents';
+const LOGIN_PAGE = '/login';
+const SIGNUP_PAGE = '/signup';
+
+const PUBLIC_PATHS_FOR_UNAUTHENTICATED = [
+  LOGIN_PAGE,
+  SIGNUP_PAGE,
+];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const sessionCookie = request.cookies.get(AUTH_COOKIE_NAME);
+  const isAuthenticated = !!sessionCookie;
 
-  // Permitir acesso a páginas de autenticação, arquivos estáticos e rotas de API
-  // Essas são verificadas primeiro e, se corresponderem, o middleware encerra aqui.
+  // 1. Bypass para assets do Next.js, rotas de API e arquivos estáticos
   if (
-    pathname.startsWith('/login') ||
-    pathname.startsWith('/signup') ||
-    pathname.startsWith('/_next/') || // Essencial para o funcionamento do Next.js
-    pathname.startsWith('/api/') ||   // Rotas de API
-    pathname.includes('.')           // Arquivos estáticos (ex: favicon.ico, images)
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/api/') ||
+    pathname.includes('.') // Assume que arquivos como .png, .ico, .svg têm ponto
   ) {
     return NextResponse.next();
   }
 
-  const sessionCookie = request.cookies.get(AUTH_COOKIE_NAME);
-
-  // REGRA PRINCIPAL: Se o usuário não estiver logado E estiver tentando acessar a página inicial
-  if (pathname === '/' && !sessionCookie) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-
-  // Proteção para rotas /admin
-  if (pathname.startsWith('/admin')) {
-    if (!sessionCookie) {
-      // Redirecionar para login se tentar acessar páginas de admin sem sessão
-      const loginUrl = new URL('/login', request.url);
-      loginUrl.searchParams.set('redirect', pathname); // Opcional: redirecionar de volta após o login
-      return NextResponse.redirect(loginUrl);
+  // 2. Lógica para usuários autenticados
+  if (isAuthenticated) {
+    // Se autenticado e tentando acessar login ou signup, redirecionar para o painel
+    if (pathname === LOGIN_PAGE || pathname === SIGNUP_PAGE) {
+      return NextResponse.redirect(new URL(DEFAULT_LOGGED_IN_PAGE, request.url));
     }
-    // Se tem cookie e está no admin, permite implicitamente (o NextResponse.next() no final cuidará disso)
+    // Se autenticado e tentando acessar a raiz, redirecionar para o painel
+    if (pathname === '/') {
+      return NextResponse.redirect(new URL(DEFAULT_LOGGED_IN_PAGE, request.url));
+    }
+    // Se autenticado e acessando qualquer outra rota (incluindo /admin/*), permitir
+    return NextResponse.next();
   }
 
-  // Opcional: Se o usuário estiver logado e acessar a página inicial,
-  // você poderia redirecioná-lo para o dashboard, por exemplo.
-  // Descomente o bloco abaixo se desejar este comportamento:
-  /*
-  if (pathname === '/' && sessionCookie) {
-    return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+  // 3. Lógica para usuários NÃO autenticados
+  // (Neste ponto, sabemos que isAuthenticated é false)
+  // Se não autenticado e tentando acessar uma rota pública definida (login/signup), permitir
+  if (PUBLIC_PATHS_FOR_UNAUTHENTICATED.includes(pathname)) {
+    return NextResponse.next();
   }
-  */
 
-  // Se nenhuma das condições de redirecionamento acima for atendida, permite o acesso.
-  return NextResponse.next();
+  // Se não autenticado e tentando acessar qualquer outra rota (incluindo / e /admin/*),
+  // redirecionar para login.
+  // Guardar a URL original para redirecionar de volta após o login, se não for a raiz ou uma página de autenticação.
+  let redirectParam = '';
+  if (pathname !== '/' && !PUBLIC_PATHS_FOR_UNAUTHENTICATED.includes(pathname)) {
+    redirectParam = `?redirect=${encodeURIComponent(pathname + request.nextUrl.search)}`;
+  }
+  return NextResponse.redirect(new URL(`${LOGIN_PAGE}${redirectParam}`, request.url));
 }
 
 export const config = {
   matcher: [
     /*
      * Corresponder a todos os caminhos de solicitação, exceto aqueles que começam com:
-     * - api (rotas de API)
+     * - api (tratado internamente acima)
      * - _next/static (arquivos estáticos)
      * - _next/image (arquivos de otimização de imagem)
      * - favicon.ico (arquivo favicon)
-     * Isso garante que o middleware seja executado para a página inicial '/'
-     * e para as rotas '/admin'.
+     * O matcher é amplo; a lógica do middleware refina o comportamento.
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/).*)',
   ],
 };
