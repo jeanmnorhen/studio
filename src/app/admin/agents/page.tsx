@@ -1,4 +1,3 @@
-
 // src/app/admin/agents/page.tsx
 import { availableAgents } from '@/lib/agent-registry';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

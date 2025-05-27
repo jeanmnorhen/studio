@@ -1,4 +1,3 @@
-
 // src/app/admin/tools/page.tsx
 import { availableTools } from '@/lib/agent-registry';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
