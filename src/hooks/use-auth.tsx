@@ -1,4 +1,3 @@
-
 // src/hooks/use-auth.tsx
 "use client";
 
@@ -18,34 +17,41 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // True until Firebase auth resolves
+  const [isClient, setIsClient] = useState(false); // State to track if we are on the client
 
   useEffect(() => {
+    // This effect runs only on the client, after the component mounts
+    setIsClient(true);
+
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setIsLoading(false);
+      setIsLoading(false); // Firebase auth state resolved
     });
 
     return () => unsubscribe();
   }, []);
 
-  // While Firebase SDK initializes and checks auth state, show a loader.
-  // This prevents flashing unauthenticated content.
-  if (isLoading && typeof window !== 'undefined') {
-     // A simple full-page loader for initial auth check
-     // You might want to refine this for better UX (e.g. only if on protected routes)
-    const path = window.location.pathname;
-    if (path.startsWith('/admin') || path === '/login' || path === '/signup') {
-        return (
-            <div className="flex min-h-screen items-center justify-center bg-background">
-                <Spinner size={48} />
-            </div>
-        );
+  // Logic for showing a spinner on specific pages while auth is loading on the client
+  if (isClient && isLoading) {
+    // This block now only runs on the client (isClient is true)
+    // and only if Firebase auth is still determining its state (isLoading is true)
+    const path = window.location.pathname; // Safe to use window object here
+    if (path.startsWith('/admin') || path.startsWith('/login') || path.startsWith('/signup')) {
+      return (
+        <div className="flex min-h-screen items-center justify-center bg-background">
+          <Spinner size={48} />
+        </div>
+      );
     }
   }
 
-
+  // On the server (`isClient` is false), or if `isLoading` is false,
+  // or if `isClient` is true, `isLoading` is true but path doesn't match the spinner paths,
+  // render the children wrapped in the provider.
+  // During the initial client render (before useEffect runs), `isClient` will be `false`,
+  // so this path will be taken, matching the server render.
   return (
     <AuthContext.Provider value={{ user, isLoading, isAuthenticated: !!user }}>
       {children}
