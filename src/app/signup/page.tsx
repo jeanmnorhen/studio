@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, UserPlus, BrainCircuit } from 'lucide-react'; // Added BrainCircuit
+import { AlertCircle, UserPlus, BrainCircuit } from 'lucide-react';
 import { signUpWithEmail } from '@/app/auth-actions';
 import Link from 'next/link';
 import { Spinner } from '@/components/loader';
@@ -36,6 +36,7 @@ export default function SignupPage() {
     setIsLoading(false);
     if (result.success) {
       router.push('/admin/agents'); 
+      router.refresh(); // Adicionado para forçar a atualização do estado do middleware/auth
     } else {
       setError(result.error);
     }
@@ -51,9 +52,8 @@ export default function SignupPage() {
       <Card className="w-full max-w-md shadow-xl border-border">
         <CardHeader>
           <CardTitle className="text-2xl font-semibold text-center text-primary">Criar Conta</CardTitle>
-          {/* <CardDescription className="text-center">Join Visionary Lens to manage your AI agents.</CardDescription> */}
         </CardHeader>
-        <CardContent className="pb-8"> {/* Added more padding bottom */}
+        <CardContent className="pb-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <Alert variant="destructive">
@@ -100,7 +100,7 @@ export default function SignupPage() {
                 className="text-base"
               />
             </div>
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3" disabled={isLoading}> {/* Made button larger */}
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3" disabled={isLoading}>
               {isLoading ? <Spinner size={20} className="mr-2" /> : <UserPlus className="mr-2 h-5 w-5" />}
               {isLoading ? 'Criando Conta...' : 'Cadastrar'}
             </Button>
@@ -109,7 +109,7 @@ export default function SignupPage() {
         <CardFooter className="flex flex-col items-center space-y-2 pt-6 border-t border-border">
           <p className="text-sm text-muted-foreground">
             Já tem uma conta?{' '}
-            <Link href="/login" className="font-medium text-primary hover:underline">
+            <Link href="/" className="font-medium text-primary hover:underline">
               Entrar
             </Link>
           </p>

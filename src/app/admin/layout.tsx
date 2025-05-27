@@ -33,7 +33,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const handleSignOut = async () => {
     const result = await signOutUser();
     if (result.success) {
-      router.push('/login');
+      router.push('/'); // Redirecionar para a raiz (que é a página de login)
+      router.refresh(); // Adicionado para forçar a atualização do estado do middleware/auth
     } else {
       // Handle error, maybe show a toast
       console.error("Sign out failed:", result.error);
@@ -64,16 +65,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            {/* O link "Visão Pública" foi removido pois a funcionalidade pública foi eliminada.
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Object Identifier App (Public)">
-                <Link href="/">
-                  <Eye />
-                  <span>Visão Pública</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            */}
           </SidebarMenu>
           
           <SidebarSeparator className="my-4" />

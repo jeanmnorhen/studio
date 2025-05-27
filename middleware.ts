@@ -4,11 +4,11 @@ import { NextResponse } from 'next/server';
 
 const AUTH_COOKIE_NAME = 'fb-studio-auth-session';
 const DEFAULT_LOGGED_IN_PAGE = '/admin/agents';
-const LOGIN_PAGE = '/login';
+const LOGIN_PAGE = '/'; // A página raiz é agora a página de login
 const SIGNUP_PAGE = '/signup';
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
   const sessionCookie = request.cookies.get(AUTH_COOKIE_NAME);
   const isAuthenticated = !!sessionCookie;
 
@@ -21,35 +21,27 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Lógica para páginas de autenticação (Login e Signup)
+  // 2. Lógica para páginas de autenticação (Signup, e a Raiz que agora é Login)
   if (pathname === LOGIN_PAGE || pathname === SIGNUP_PAGE) {
     if (isAuthenticated) {
       // Se autenticado e tentando acessar login/signup, redirecionar para o painel padrão
       return NextResponse.redirect(new URL(DEFAULT_LOGGED_IN_PAGE, request.url));
     }
-    // Se não autenticado, permitir acesso ao login/signup
+    // Se não autenticado, permitir acesso ao login (raiz) ou signup
     return NextResponse.next();
   }
 
-  // 3. Lógica para a página raiz ('/')
-  if (pathname === '/') {
-    if (isAuthenticated) {
-      // Se autenticado e na raiz, redirecionar para o painel padrão
-      return NextResponse.redirect(new URL(DEFAULT_LOGGED_IN_PAGE, request.url));
-    } else {
-      // Se não autenticado e na raiz, redirecionar para login
-      return NextResponse.redirect(new URL(LOGIN_PAGE, request.url));
-    }
-  }
-
-  // 4. Lógica para outras rotas (implicitamente protegidas, como /admin/*)
-  // Neste ponto, sabemos que não é uma página de autenticação nem a raiz.
+  // 3. Lógica para outras rotas (implicitamente protegidas, como /admin/*)
+  // Neste ponto, sabemos que não é uma página de autenticação.
   if (!isAuthenticated) {
-    // Se não autenticado e tentando acessar qualquer outra rota protegida, redirecionar para login
+    // Se não autenticado e tentando acessar qualquer outra rota protegida, redirecionar para login (raiz)
     // Guardar a URL original para redirecionar de volta após o login.
     const redirectUrl = new URL(LOGIN_PAGE, request.url);
-    if (pathname !== LOGIN_PAGE) { // Evitar adicionar redirect para o próprio login
-        redirectUrl.searchParams.set('redirect', pathname + request.nextUrl.search);
+    // Não adicionar 'redirect' se já estivermos na página de login (raiz) para evitar loops,
+    // embora o bloco anterior já deva ter lidado com a raiz para não autenticados.
+    // Esta condição de `pathname !== LOGIN_PAGE` é mais uma segurança.
+    if (pathname !== LOGIN_PAGE) {
+        redirectUrl.searchParams.set('redirect', pathname + search);
     }
     return NextResponse.redirect(redirectUrl);
   }
