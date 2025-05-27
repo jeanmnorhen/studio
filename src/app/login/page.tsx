@@ -1,4 +1,3 @@
-
 // src/app/login/page.tsx
 "use client";
 
@@ -32,7 +31,7 @@ export default function LoginPage() {
 
     setIsLoading(false);
     if (result.success) {
-      const redirectPath = searchParams.get('redirect') || '/admin/dashboard';
+      const redirectPath = searchParams.get('redirect') || '/admin/agents'; // Alterado aqui
       router.push(redirectPath);
     } else {
       setError(result.error);
