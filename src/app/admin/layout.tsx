@@ -23,7 +23,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { signOutUser } from '@/app/auth-actions';
 import { useAuth } from '@/hooks/use-auth';
-import { Home, Settings, Users, ListChecks, LogOut, Eye, Palette, BrainCog, Aperture } from 'lucide-react';
+import { Home, Settings, Users, ListChecks, LogOut, Eye, Palette, BrainCog, Aperture, FlaskConical } from 'lucide-react';
 import Image from 'next/image';
 
 
@@ -96,6 +96,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <Link href="/admin/tools">
                     <Palette /> {/* Replaced Wrench with Palette for "Tools" */}
                     <span>Tools</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+
+          <SidebarSeparator className="my-4" />
+          
+          <SidebarGroup>
+            <SidebarGroupLabel>Development</SidebarGroupLabel>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Playground">
+                  <Link href="/admin/playground">
+                    <FlaskConical />
+                    <span>Playground</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
