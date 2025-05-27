@@ -7,31 +7,37 @@ const AUTH_COOKIE_NAME = 'fb-studio-auth-session';
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow access to auth pages and static files/API routes
+  // Permitir acesso a páginas de autenticação, arquivos estáticos e rotas de API
   if (
     pathname.startsWith('/login') ||
     pathname.startsWith('/signup') ||
     pathname.startsWith('/_next/') ||
-    pathname.startsWith('/api/') || // Allow API routes
-    pathname.includes('.') // Allow static files like images, css
+    pathname.startsWith('/api/') || // Permitir rotas de API
+    pathname.includes('.') // Permitir arquivos estáticos como imagens, css
   ) {
     return NextResponse.next();
   }
 
   const sessionCookie = request.cookies.get(AUTH_COOKIE_NAME);
 
+  // Se o usuário não estiver logado e estiver na página inicial, redirecionar para login
+  if ((pathname === '/' || pathname === '') && !sessionCookie) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  // Se o usuário estiver tentando acessar rotas /admin
   if (pathname.startsWith('/admin')) {
     if (!sessionCookie) {
-      // Redirect to login if trying to access admin pages without a session
+      // Redirecionar para login se tentar acessar páginas de admin sem sessão
       const loginUrl = new URL('/login', request.url);
-      loginUrl.searchParams.set('redirect', pathname); // Optional: redirect back after login
+      loginUrl.searchParams.set('redirect', pathname); // Opcional: redirecionar de volta após o login
       return NextResponse.redirect(loginUrl);
     }
   } else if (sessionCookie && (pathname === '/' || pathname === '')) {
-    // Optional: If logged in and on homepage, redirect to dashboard
+    // Opcional: Se logado e na página inicial, poderia redirecionar para o dashboard
     // return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+    // Por enquanto, permite que usuários logados vejam a página inicial se navegarem diretamente.
   }
-
 
   return NextResponse.next();
 }
@@ -39,11 +45,11 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * Corresponder a todos os caminhos de solicitação, exceto aqueles que começam com:
+     * - api (rotas de API)
+     * - _next/static (arquivos estáticos)
+     * - _next/image (arquivos de otimização de imagem)
+     * - favicon.ico (arquivo favicon)
      */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
