@@ -43,7 +43,7 @@ export default function LoginPage() { // O nome da função pode continuar Login
     <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background">
       <div className="text-center mb-8">
         <BrainCircuit className="mx-auto h-16 w-16 text-primary" />
-        <h1 className="mt-4 text-4xl font-bold tracking-tight text-primary">Visionary AI Panel</h1>
+        <h1 className="mt-4 text-4xl font-bold tracking-tight text-primary">Painel de Controle</h1>
         <p className="mt-2 text-lg text-muted-foreground">Bem-vindo! Faça login para gerenciar seus agentes de IA.</p>
       </div>
       <Card className="w-full max-w-md shadow-xl border-border">
