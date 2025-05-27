@@ -1,4 +1,3 @@
-
 // src/app/admin/layout.tsx
 "use client";
 
@@ -23,7 +22,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { signOutUser } from '@/app/auth-actions';
 import { useAuth } from '@/hooks/use-auth';
-import { Home, Settings, Users, ListChecks, LogOut, Eye, Palette, BrainCog, Aperture, FlaskConical } from 'lucide-react';
+import { Home, Settings, Eye, Palette, BrainCircuit, LogOut, FlaskConical } from 'lucide-react'; // Changed BrainCog to BrainCircuit
 import Image from 'next/image';
 
 
@@ -41,9 +40,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   };
 
-  // If auth is still loading, or no user, you might want to show a loader or redirect
-  // This check is more for client-side rendering scenarios after initial load
-  // Middleware should handle the primary protection
   if (isLoading) {
     return <div className="flex h-screen items-center justify-center"><Settings className="h-12 w-12 animate-spin text-primary" /> Loading Admin...</div>;
   }
@@ -53,8 +49,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <Sidebar collapsible="icon" className="border-r border-sidebar-border">
         <SidebarHeader className="p-4">
            <Link href="/admin/dashboard" className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
-            <Aperture className="h-8 w-8 text-primary group-data-[collapsible=icon]:h-7 group-data-[collapsible=icon]:w-7" />
-            <h1 className="text-2xl font-semibold text-primary group-data-[collapsible=icon]:hidden">Visionary</h1>
+            <BrainCircuit className="h-8 w-8 text-sidebar-primary group-data-[collapsible=icon]:h-7 group-data-[collapsible=icon]:w-7" /> {/* Changed icon and color */}
+            <h1 className="text-xl font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">Visionary AI Panel</h1> {/* Changed title and styling */}
           </Link>
         </SidebarHeader>
 
@@ -69,10 +65,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Object Identifier App">
-                <Link href="/">
+              <SidebarMenuButton asChild tooltip="Object Identifier App (Public)">
+                <Link href="/"> {/* This will redirect to login or /admin/agents based on auth state */}
                   <Eye />
-                  <span>Object ID App</span>
+                  <span>Visão Pública</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -81,21 +77,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <SidebarSeparator className="my-4" />
 
           <SidebarGroup>
-            <SidebarGroupLabel>AI Management</SidebarGroupLabel>
+            <SidebarGroupLabel>Gerenciamento de IA</SidebarGroupLabel>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Agents">
+                <SidebarMenuButton asChild tooltip="Agentes">
                   <Link href="/admin/agents">
-                    <BrainCog />
-                    <span>Agents</span>
+                    <BrainCircuit /> {/* Consistent icon */}
+                    <span>Agentes</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Tools">
+                <SidebarMenuButton asChild tooltip="Ferramentas">
                   <Link href="/admin/tools">
-                    <Palette /> {/* Replaced Wrench with Palette for "Tools" */}
-                    <span>Tools</span>
+                    <Palette /> 
+                    <span>Ferramentas</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -105,7 +101,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <SidebarSeparator className="my-4" />
           
           <SidebarGroup>
-            <SidebarGroupLabel>Development</SidebarGroupLabel>
+            <SidebarGroupLabel>Desenvolvimento</SidebarGroupLabel>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Playground">
@@ -122,13 +118,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <SidebarFooter className="p-4 border-t border-sidebar-border">
           {user && (
-            <div className="flex items-center gap-2 mb-4 group-data-[collapsible=icon]:hidden">
+            <div className="flex items-center gap-3 mb-4 group-data-[collapsible=icon]:hidden"> {/* Increased gap */}
                <Image
                   src={`https://placehold.co/40x40.png?text=${user.email?.[0]?.toUpperCase() ?? 'U'}`}
                   alt="User Avatar"
-                  width={32}
-                  height={32}
-                  className="rounded-full"
+                  width={36} // Slightly larger avatar
+                  height={36}
+                  className="rounded-full border-2 border-sidebar-accent" // Added border
                   data-ai-hint="user avatar"
                 />
               <div className="text-sm">
@@ -139,7 +135,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Button
             variant="outline"
             onClick={handleSignOut}
-            className="w-full group-data-[collapsible=icon]:aspect-square group-data-[collapsible=icon]:p-0"
+            className="w-full group-data-[collapsible=icon]:aspect-square group-data-[collapsible=icon]:p-0 border-sidebar-accent hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" // Adjusted style for sidebar context
           >
             <LogOut className="group-data-[collapsible=icon]:h-5 group-data-[collapsible=icon]:w-5" />
             <span className="group-data-[collapsible=icon]:hidden">Sign Out</span>
@@ -147,7 +143,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <div className="p-4 sm:p-6 md:p-8">
+        <div className="p-6 sm:p-8 md:p-10 bg-background min-h-screen"> {/* Adjusted padding */}
          {children}
         </div>
       </SidebarInset>

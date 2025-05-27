@@ -1,4 +1,3 @@
-
 // src/app/signup/page.tsx
 "use client";
 
@@ -10,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, UserPlus } from 'lucide-react';
+import { AlertCircle, UserPlus, BrainCircuit } from 'lucide-react'; // Added BrainCircuit
 import { signUpWithEmail } from '@/app/auth-actions';
 import Link from 'next/link';
 import { Spinner } from '@/components/loader';
@@ -26,7 +25,7 @@ export default function SignupPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError("As senhas não coincidem.");
       return;
     }
     setIsLoading(true);
@@ -36,7 +35,7 @@ export default function SignupPage() {
 
     setIsLoading(false);
     if (result.success) {
-      router.push('/admin/agents'); // Redirecionar para o painel de agentes
+      router.push('/admin/agents'); 
     } else {
       setError(result.error);
     }
@@ -44,17 +43,22 @@ export default function SignupPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background">
-      <Card className="w-full max-w-md shadow-xl">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold text-primary">Create Account</CardTitle>
-          <CardDescription>Join Visionary Lens to manage your AI agents.</CardDescription>
+      <div className="text-center mb-8">
+        <BrainCircuit className="mx-auto h-16 w-16 text-primary" />
+        <h1 className="mt-4 text-4xl font-bold tracking-tight text-primary">Visionary AI Panel</h1>
+        <p className="mt-2 text-lg text-muted-foreground">Crie sua conta para gerenciar seus agentes de IA.</p>
+      </div>
+      <Card className="w-full max-w-md shadow-xl border-border">
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold text-center text-primary">Criar Conta</CardTitle>
+          {/* <CardDescription className="text-center">Join Visionary Lens to manage your AI agents.</CardDescription> */}
         </CardHeader>
-        <CardContent>
+        <CardContent className="pb-8"> {/* Added more padding bottom */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Signup Failed</AlertTitle>
+                <AlertTitle>Falha no Cadastro</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -63,7 +67,7 @@ export default function SignupPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -71,7 +75,7 @@ export default function SignupPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Senha (mínimo 6 caracteres)</Label>
               <Input
                 id="password"
                 type="password"
@@ -84,7 +88,7 @@ export default function SignupPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirm Password</Label>
+              <Label htmlFor="confirm-password">Confirmar Senha</Label>
               <Input
                 id="confirm-password"
                 type="password"
@@ -96,17 +100,17 @@ export default function SignupPage() {
                 className="text-base"
               />
             </div>
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3" disabled={isLoading}> {/* Made button larger */}
               {isLoading ? <Spinner size={20} className="mr-2" /> : <UserPlus className="mr-2 h-5 w-5" />}
-              {isLoading ? 'Creating Account...' : 'Sign Up'}
+              {isLoading ? 'Criando Conta...' : 'Cadastrar'}
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex flex-col items-center space-y-2">
+        <CardFooter className="flex flex-col items-center space-y-2 pt-6 border-t border-border">
           <p className="text-sm text-muted-foreground">
-            Already have an account?{' '}
+            Já tem uma conta?{' '}
             <Link href="/login" className="font-medium text-primary hover:underline">
-              Sign In
+              Entrar
             </Link>
           </p>
         </CardFooter>
