@@ -1,6 +1,4 @@
-
 // src/lib/agent-registry.ts
-'use server';
 /**
  * @fileOverview Defines structures for AI agents and tools and provides a registry.
  */
