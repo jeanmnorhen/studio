@@ -2,7 +2,7 @@
 "use client";
 
 import type React from 'react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { analyzeImageAction } from '@/app/actions';
 import { Button } from '@/components/ui/button';
@@ -21,15 +21,6 @@ export default function ImageAnalysisForm() {
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-
-  useEffect(() => {
-    // Clean up the object URL when the component unmounts or image changes
-    return () => {
-      if (imagePreviewUrl && imagePreviewUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(imagePreviewUrl);
-      }
-    };
-  }, [imagePreviewUrl]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -98,9 +89,6 @@ export default function ImageAnalysisForm() {
 
   const clearStates = () => {
     setImageFile(null);
-    if (imagePreviewUrl && imagePreviewUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(imagePreviewUrl);
-    }
     setImagePreviewUrl(null);
     setIdentifiedObjects(null);
     setIsLoading(false);
@@ -192,7 +180,7 @@ export default function ImageAnalysisForm() {
         <Button
           onClick={clearStates}
           variant="outline"
-          disabled={isLoading && (!imagePreviewUrl && !identifiedObjects && !error)}
+          disabled={isLoading || (!imageFile && !identifiedObjects && !error)}
           className="w-full sm:w-auto"
         >
           <Trash2 className="mr-2 h-4 w-4" />
