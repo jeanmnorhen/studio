@@ -2,5 +2,8 @@
 import { config } from 'dotenv';
 config();
 
-import '@/ai/flows/identify-objects.ts';
-import '@/ai/tools/image-analysis-tools.ts'; // Import the new tools file
+// Importações de fluxos e ferramentas foram removidas pois a funcionalidade de identificação de objetos foi eliminada.
+// Adicione aqui importações de novos fluxos ou ferramentas conforme forem criados.
+// Exemplo:
+// import '@/ai/flows/meu-novo-fluxo.ts';
+// import '@/ai/tools/minha-nova-ferramenta.ts';

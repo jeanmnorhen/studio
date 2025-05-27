@@ -1,9 +1,8 @@
-
 // src/app/admin/playground/page.tsx
-import ImageAnalysisForm from '@/components/image-analysis-form';
+// import ImageAnalysisForm from '@/components/image-analysis-form'; // Removido
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { FlaskConical, Info } from 'lucide-react';
+import { FlaskConical, Info, Construction } from 'lucide-react';
 // TODO: Importar Select, SelectContent, SelectItem, SelectTrigger, SelectValue de '@/components/ui/select'
 // TODO: Importar Label de '@/components/ui/label'
 // TODO: Importar o hook useState de React
@@ -34,49 +33,30 @@ export default function PlaygroundPage() {
         </p>
       </header>
 
-      {/* 
-        TODO: No futuro, esta seção se tornará mais dinâmica.
-        1. Um dropdown permitirá selecionar qual agente testar (estático ou configurado dinamicamente).
-        2. Abaixo do dropdown, os campos de input necessários para o agente selecionado serão renderizados.
-           Isso exigirá ler o inputSchema do agente.
-        3. Um botão "Executar Agente" chamará a função principal do agente com os dados fornecidos.
-        4. Os resultados serão exibidos abaixo.
-
-        Exemplo de como o seletor de agente poderia ser:
-        <div className="mb-6">
-          <Label htmlFor="agent-select">Selecionar Agente para Testar</Label>
-          <Select 
-            value={selectedAgentId} 
-            onValueChange={setSelectedAgentId}
-            name="agent-select" 
-            id="agent-select"
-          >
-            <SelectTrigger className="w-full md:w-1/2">
-              <SelectValue placeholder="Selecione um agente" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableAgents.map(agent => ( // availableAgents viria do agent-registry ou de uma função combinada
-                <SelectItem key={agent.id} value={agent.id}>
-                  {agent.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      */}
-
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>Teste de Identificação de Objetos</CardTitle>
+          <CardTitle>Área de Testes de Agentes de IA</CardTitle>
           <CardDescription>
-            Use o formulário abaixo para fazer upload de uma imagem e testar a funcionalidade de identificação de objetos.
-            Os resultados serão exibidos diretamente. Atualmente, este playground testa o agente padrão de identificação de objetos.
+            Esta seção permitirá que você selecione e teste diferentes agentes de IA configurados no sistema.
+            Atualmente, a funcionalidade de identificação de objetos foi removida.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="max-w-2xl mx-auto"> {/* Centralizando e largura máxima para o formulário */}
-            <ImageAnalysisForm />
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <Construction className="h-16 w-16 text-muted-foreground/50 mb-4" />
+            <h3 className="text-xl font-semibold">Em Desenvolvimento</h3>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              O formulário de teste para o agente de identificação de objetos foi removido.
+              Esta área será expandida para permitir a seleção e o teste de outros agentes de IA conforme forem adicionados ao sistema.
+            </p>
           </div>
+          {/* 
+            TODO: No futuro, esta seção se tornará mais dinâmica.
+            1. Um dropdown permitirá selecionar qual agente testar.
+            2. Abaixo do dropdown, os campos de input necessários para o agente selecionado serão renderizados.
+            3. Um botão "Executar Agente" chamará a função principal do agente.
+            4. Os resultados serão exibidos abaixo.
+          */}
         </CardContent>
       </Card>
       

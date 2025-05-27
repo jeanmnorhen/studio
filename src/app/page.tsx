@@ -1,10 +1,9 @@
 // src/app/page.tsx
-// Esta página não é mais o ponto de entrada principal devido ao middleware.
-// O middleware redireciona para /login se não autenticado, ou /admin/agents se autenticado.
-// Manteremos o conteúdo original caso haja alguma rota direta para ela no futuro,
-// ou se o middleware for ajustado.
+// O middleware agora lida com o redirecionamento da página raiz.
+// Se o usuário não estiver autenticado, será redirecionado para /login.
+// Se estiver autenticado, será redirecionado para /admin/agents.
+// Este conteúdo não deve ser exibido normalmente.
 
-import ImageAnalysisForm from '@/components/image-analysis-form';
 import { BrainCircuit } from 'lucide-react';
 
 export default function HomePage() {
@@ -15,12 +14,11 @@ export default function HomePage() {
            <BrainCircuit className="mx-auto h-20 w-20 text-primary mb-6" />
           <h1 className="text-5xl font-bold tracking-tight text-primary">Visionary AI</h1>
           <p className="mt-3 text-xl text-muted-foreground">
-            Faça upload de uma imagem e deixe nossa IA identificar os objetos contidos nela.
+            Painel de Controle de Agentes de IA.
           </p>
         </header>
-        <ImageAnalysisForm />
-        <p className="text-xs text-muted-foreground pt-8">
-          Nota: Esta é a interface pública de demonstração. O painel de controle de agentes está disponível após o login.
+        <p className="text-sm text-muted-foreground pt-8">
+          Você será redirecionado para a página de login ou para o painel de controle.
         </p>
       </div>
     </main>

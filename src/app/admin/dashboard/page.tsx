@@ -1,9 +1,12 @@
-
 // src/app/admin/dashboard/page.tsx
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BrainCog, Palette, Activity } from "lucide-react";
+import { availableAgents, availableTools } from '@/lib/agent-registry';
 
 export default function DashboardPage() {
+  const agentCount = availableAgents.length;
+  const toolCount = availableTools.length;
+
   return (
     <div className="space-y-8">
       <header>
@@ -18,8 +21,7 @@ export default function DashboardPage() {
             <BrainCog className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1</div> 
-            {/* TODO: Replace with dynamic count from agent-registry */}
+            <div className="text-2xl font-bold">{agentCount}</div>
             <p className="text-xs text-muted-foreground">
               Currently active agents.
             </p>
@@ -32,8 +34,7 @@ export default function DashboardPage() {
             <Palette className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1</div>
-             {/* TODO: Replace with dynamic count from agent-registry */}
+            <div className="text-2xl font-bold">{toolCount}</div>
             <p className="text-xs text-muted-foreground">
               Tools usable by agents.
             </p>
@@ -65,8 +66,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <p>
-              Use the sidebar navigation to explore different sections. The "Object Identifier App" link
-              takes you back to the main application.
+              Use the sidebar navigation to explore different sections.
             </p>
           </CardContent>
         </Card>

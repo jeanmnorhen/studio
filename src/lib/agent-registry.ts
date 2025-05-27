@@ -3,8 +3,6 @@
  * @fileOverview Defines structures for AI agents and tools and provides a registry.
  */
 import type { ZodTypeAny } from 'zod';
-import { identifyObjectsTool, IdentifyObjectsToolInputSchema, IdentifyObjectsToolOutputSchema } from '@/ai/tools/image-analysis-tools';
-import { identifyObjects, IdentifyObjectsInputSchema, IdentifyObjectsOutputSchema } from '@/ai/flows/identify-objects'; // This is our "agent"
 
 export interface ToolDefinition {
   id: string;
@@ -19,35 +17,38 @@ export interface AgentDefinition {
   id: string;
   name: string;
   description: string;
-  // mainFunction: (input: any) => Promise<any>; // Reference to the exported flow function
   inputSchema: ZodTypeAny;
   outputSchema: ZodTypeAny;
   associatedTools: ToolDefinition[]; // Tools this agent is configured to use or primarily interacts with
 }
 
 // --- Available Tools ---
+// A ferramenta de identificação de objetos foi removida.
 export const availableTools: ToolDefinition[] = [
+  // Exemplo de como adicionar uma nova ferramenta no futuro:
+  /*
   {
-    id: 'tool-identify-objects',
-    name: 'Object Identifier In Image',
-    description: 'A Genkit tool that identifies objects in a given image data URI.',
-    inputSchema: IdentifyObjectsToolInputSchema,
-    outputSchema: IdentifyObjectsToolOutputSchema,
-    // genkitToolReference: identifyObjectsTool // Store the actual tool
+    id: 'tool-example',
+    name: 'Example Tool',
+    description: 'A sample tool for demonstration.',
+    inputSchema: z.object({ query: z.string() }),
+    outputSchema: z.object({ result: z.string() }),
   },
-  // Add other tools here as they are created
+  */
 ];
 
 // --- Available Agents (Flows) ---
+// O agente de identificação de objetos foi removido.
 export const availableAgents: AgentDefinition[] = [
+  // Exemplo de como adicionar um novo agente no futuro:
+  /*
   {
-    id: 'agent-image-object-identifier',
-    name: 'Image Object Identifier Agent',
-    description: 'An agent (Genkit flow) that utilizes the "Object Identifier In Image" tool to analyze images and report found objects.',
-    // mainFunction: identifyObjects, // The exported function of the flow
-    inputSchema: IdentifyObjectsInputSchema, // The agent's own input schema
-    outputSchema: IdentifyObjectsOutputSchema, // The agent's own output schema
-    associatedTools: availableTools.filter(t => t.id === 'tool-identify-objects'),
+    id: 'agent-example',
+    name: 'Example Agent',
+    description: 'A sample agent that might use the example tool.',
+    inputSchema: z.object({ task: z.string() }),
+    outputSchema: z.object({ outcome: z.string() }),
+    associatedTools: availableTools.filter(t => t.id === 'tool-example'),
   },
-  // Add other agents here
+  */
 ];
