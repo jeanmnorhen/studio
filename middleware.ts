@@ -42,6 +42,7 @@ export function middleware(request: NextRequest) {
 
   // 3. Lógica para usuários NÃO autenticados
   // (Neste ponto, sabemos que isAuthenticated é false)
+
   // Se não autenticado e tentando acessar uma rota pública definida (login/signup), permitir
   if (PUBLIC_PATHS_FOR_UNAUTHENTICATED.includes(pathname)) {
     return NextResponse.next();
@@ -49,11 +50,18 @@ export function middleware(request: NextRequest) {
 
   // Se não autenticado e tentando acessar qualquer outra rota (incluindo / e /admin/*),
   // redirecionar para login.
-  // Guardar a URL original para redirecionar de volta após o login, se não for a raiz ou uma página de autenticação.
+  // Guardar a URL original para redirecionar de volta após o login, se não for uma página de autenticação protegida.
   let redirectParam = '';
-  if (pathname !== '/' && !PUBLIC_PATHS_FOR_UNAUTHENTICATED.includes(pathname)) {
+  const isProtectedPath = pathname.startsWith('/admin/') || pathname === '/'; // A raiz agora também é implicitamente protegida
+
+  // Não adiciona redirectParam se o destino já é uma página pública de auth
+  // ou se a intenção original era a raiz (que agora sempre redireciona para login ou painel).
+  if (isProtectedPath && pathname !== '/' && !PUBLIC_PATHS_FOR_UNAUTHENTICATED.includes(pathname)) {
+     // Se o usuário tentou acessar, por exemplo, /admin/tools, vamos guardar isso.
     redirectParam = `?redirect=${encodeURIComponent(pathname + request.nextUrl.search)}`;
   }
+  // Se não autenticado, redireciona tudo (exceto as públicas já tratadas) para LOGIN_PAGE.
+  // Se a rota original era a raiz, redirectParam será vazio, levando apenas para /login.
   return NextResponse.redirect(new URL(`${LOGIN_PAGE}${redirectParam}`, request.url));
 }
 
