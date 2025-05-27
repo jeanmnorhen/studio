@@ -1,17 +1,21 @@
-
 // src/ai/tools/image-analysis-tools.ts
-'use server';
+// 'use server'; // Removed this line
+
 /**
  * @fileOverview Provides AI tools related to image analysis.
  *
  * - identifyObjectsTool - A Genkit tool to identify objects in an image.
+ * - IdentifyObjectsToolInputSchema - The Zod schema for the input of the identifyObjectsTool.
+ * - IdentifyObjectsToolInput - The TypeScript type for the input of the identifyObjectsTool.
+ * - IdentifyObjectsToolOutputSchema - The Zod schema for the output of the identifyObjectsTool.
+ * - IdentifyObjectsToolOutput - The TypeScript type for the output of the identifyObjectsTool.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
 // Schema for the input of the identifyObjectsTool
-const IdentifyObjectsToolInputSchema = z.object({
+export const IdentifyObjectsToolInputSchema = z.object({
   photoDataUri: z
     .string()
     .describe(
@@ -21,7 +25,7 @@ const IdentifyObjectsToolInputSchema = z.object({
 export type IdentifyObjectsToolInput = z.infer<typeof IdentifyObjectsToolInputSchema>;
 
 // Schema for the output of the identifyObjectsTool
-const IdentifyObjectsToolOutputSchema = z.object({
+export const IdentifyObjectsToolOutputSchema = z.object({
   objects: z.array(z.string()).describe('A list of objects identified in the image.'),
 });
 export type IdentifyObjectsToolOutput = z.infer<typeof IdentifyObjectsToolOutputSchema>;
@@ -53,7 +57,7 @@ Image: {{media url=${input.photoDataUri}}}`, // Directly embed, or pass input an
         // This case should ideally be handled by Genkit if the LLM fails to produce structured output
         // according to the schema, but good to have a fallback.
         console.error('identifyObjectsTool: LLM did not produce valid output according to schema.');
-        return { objects: [] }; // Return empty or throw an error
+        return { objects: ["Error: Tool failed to get valid output."] }; 
     }
     return output;
   }
