@@ -4,13 +4,15 @@ import { availableAgents } from '@/lib/agent-registry';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
-import { BrainCog, Info } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { BrainCog, Info, PlusCircle } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import Link from 'next/link';
 
 export default function AgentsPage() {
   return (
@@ -18,22 +20,26 @@ export default function AgentsPage() {
       <header className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-primary flex items-center">
-            <BrainCog className="mr-3 h-8 w-8" /> Agent Management
+            <BrainCog className="mr-3 h-8 w-8" /> Gerenciamento de Agentes
           </h1>
-          <p className="text-muted-foreground">View and manage your AI agents (Genkit Flows).</p>
+          <p className="text-muted-foreground">Visualize e gerencie seus agentes de IA (Fluxos Genkit).</p>
         </div>
-        {/* Placeholder for "Create Agent" button - Future Scope */}
-        {/* <Button disabled>
-          <PlusCircle className="mr-2 h-4 w-4" /> Create New Agent
-        </Button> */}
+        {/* 
+          TODO: Implementar botão "Criar Novo Agente" e funcionalidade.
+          Este botão levaria para uma nova página /admin/agents/new 
+          onde o usuário poderia configurar e criar um novo agente.
+        */}
+        <Button disabled>
+          <PlusCircle className="mr-2 h-4 w-4" /> Criar Novo Agente (Em Breve)
+        </Button>
       </header>
 
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>Registered Agents</CardTitle>
+          <CardTitle>Agentes Registrados (Estáticos)</CardTitle>
           <CardDescription>
-            The following agents (Genkit flows) are defined in the system. 
-            "Control over creation" via UI is planned for future updates.
+            Os seguintes agentes (fluxos Genkit) estão definidos estaticamente no sistema.
+            A listagem de agentes configurados dinamicamente e o controle sobre a criação via UI são planejados para atualizações futuras.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -41,10 +47,10 @@ export default function AgentsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[250px]">Name</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Associated Tools</TableHead>
-                  {/* <TableHead className="text-right">Actions</TableHead> */}
+                  <TableHead className="w-[250px]">Nome</TableHead>
+                  <TableHead>Descrição</TableHead>
+                  <TableHead>Ferramentas Associadas</TableHead>
+                  {/* <TableHead className="text-right">Ações</TableHead> */}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -72,12 +78,14 @@ export default function AgentsPage() {
                           ))}
                         </div>
                       ) : (
-                        <span className="text-xs text-muted-foreground">None</span>
+                        <span className="text-xs text-muted-foreground">Nenhuma</span>
                       )}
                     </TableCell>
-                    {/* <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" disabled>Manage</Button>
-                    </TableCell> */}
+                    {/* 
+                      TODO: Adicionar botões de Ações (Editar, Excluir/Desabilitar)
+                      quando a funcionalidade de agentes dinâmicos for implementada.
+                      Ex: <Button variant="ghost" size="sm" asChild><Link href={`/admin/agents/edit/${agent.id}`}>Editar</Link></Button> 
+                    */}
                   </TableRow>
                 ))}
               </TableBody>
@@ -85,9 +93,9 @@ export default function AgentsPage() {
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <BrainCog className="h-16 w-16 text-muted-foreground/50 mb-4" />
-              <h3 className="text-xl font-semibold">No Agents Defined</h3>
+              <h3 className="text-xl font-semibold">Nenhum Agente Definido</h3>
               <p className="text-muted-foreground">
-                There are currently no agents registered in the system.
+                Atualmente não há agentes registrados no sistema.
               </p>
             </div>
           )}
@@ -97,9 +105,9 @@ export default function AgentsPage() {
         <CardHeader className="flex flex-row items-start gap-3">
           <Info className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
           <div>
-            <CardTitle className="text-lg">About Agents</CardTitle>
+            <CardTitle className="text-lg">Sobre Agentes</CardTitle>
             <CardDescription>
-              In this system, "Agents" are represented by Genkit Flows. They orchestrate tasks, potentially using one or more "Tools" to achieve their goals. The "Main Function" of an agent is its exported flow function.
+              Neste sistema, "Agentes" são representados por Fluxos Genkit. Eles orquestram tarefas, potencialmente usando uma ou mais "Ferramentas" para atingir seus objetivos. A "Função Principal" de um agente é sua função de fluxo exportada. Agentes configuráveis dinamicamente serão armazenados no Firebase.
             </CardDescription>
           </div>
         </CardHeader>
