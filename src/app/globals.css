@@ -13,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 15% 20%;
     
-    --primary: 220 40% 35%; /* Midnight Blue */
+    --primary: 130 40% 25%; /* Verde Escuro */
     --primary-foreground: 0 0% 98%; /* Almost White for text on primary */
     
     --secondary: 220 20% 90%; /* A slightly darker slate gray for secondary elements */
@@ -30,7 +30,7 @@
     
     --border: 220 20% 85%;
     --input: 220 20% 85%;
-    --ring: 190 70% 55%; /* Accent color (Vibrant Cyan) for rings */
+    --ring: 130 40% 25%; /* Verde Escuro para anéis de foco */
     --radius: 0.5rem;
 
     --chart-1: 190 70% 55%; /* Accent */
@@ -60,8 +60,8 @@
     --popover: 220 15% 10%;
     --popover-foreground: 0 0% 95%;
     
-    --primary: 190 65% 60%; /* Lighter Cyan for primary in dark mode */
-    --primary-foreground: 220 15% 10%; /* Dark text on primary */
+    --primary: 130 40% 30%; /* Verde Escuro (ligeiramente mais claro para modo escuro) */
+    --primary-foreground: 0 0% 98%; /* Almost White text on primary */
     
     --secondary: 220 15% 25%;
     --secondary-foreground: 0 0% 90%;
@@ -77,7 +77,7 @@
     
     --border: 220 15% 25%;
     --input: 220 15% 25%;
-    --ring: 190 65% 60%; /* Primary color for rings in dark mode */
+    --ring: 130 40% 30%; /* Verde Escuro para anéis de foco no modo escuro */
 
     --chart-1: 190 65% 60%;
     --chart-2: 220 40% 50%;
