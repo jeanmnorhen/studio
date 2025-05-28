@@ -14,6 +14,8 @@ import { signUpWithEmail } from '@/app/auth-actions';
 import Link from 'next/link';
 import { Spinner } from '@/components/loader';
 
+const DEFAULT_LOGGED_IN_REDIRECT = '/admin/agents';
+
 export default function SignupPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -35,8 +37,8 @@ export default function SignupPage() {
 
     setIsLoading(false);
     if (result.success) {
-      router.push('/admin/agents'); 
-      router.refresh(); // Adicionado para forçar a atualização do estado do middleware/auth
+      await router.push(DEFAULT_LOGGED_IN_REDIRECT); 
+      router.refresh(); // Crucial para o middleware re-avaliar com o novo cookie
     } else {
       setError(result.error);
     }

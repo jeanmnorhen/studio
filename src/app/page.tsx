@@ -14,9 +14,11 @@ import { loginWithEmail } from '@/app/auth-actions';
 import Link from 'next/link';
 import { Spinner } from '@/components/loader';
 
+const DEFAULT_LOGGED_IN_REDIRECT = '/admin/agents';
+
 export default function LoginPage() { // O nome da função pode continuar LoginPage para clareza, mas é a página raiz
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams(); // Mantido para o caso de redirecionamento pré-login
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -31,9 +33,11 @@ export default function LoginPage() { // O nome da função pode continuar Login
 
     setIsLoading(false);
     if (result.success) {
-      const redirectPath = searchParams.get('redirect') || '/admin/agents';
-      router.push(redirectPath);
-      router.refresh(); // Adicionado para forçar a atualização do estado do middleware/auth
+      // Se havia um parâmetro 'redirect' (ex: vindo de uma tentativa de acesso não autenticado a uma página protegida),
+      // use-o. Caso contrário, use o padrão.
+      const redirectPath = searchParams.get('redirect') || DEFAULT_LOGGED_IN_REDIRECT;
+      await router.push(redirectPath);
+      router.refresh(); // Crucial para o middleware re-avaliar com o novo cookie
     } else {
       setError(result.error);
     }
