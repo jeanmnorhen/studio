@@ -2,7 +2,10 @@
 /**
  * @fileOverview Defines structures for AI agents and tools and provides a registry.
  */
-import type { ZodTypeAny } from 'zod';
+import { z, type ZodTypeAny } from 'zod';
+import { IdentifyObjectsToolInputSchema, IdentifyObjectsToolOutputSchema } from '@/ai/tools/image-analysis-tools';
+import { ObjectIdentificationAgentInputSchema, ObjectIdentificationAgentOutputSchema } from '@/ai/flows/object-identification-flow';
+
 
 export interface ToolDefinition {
   id: string;
@@ -23,32 +26,28 @@ export interface AgentDefinition {
 }
 
 // --- Available Tools ---
-// A ferramenta de identificação de objetos foi removida.
+export const objectIdentifierTool: ToolDefinition = {
+  id: 'tool-identify-objects-in-image',
+  name: 'Identify Objects in Image Tool',
+  description: 'Identifica objetos em uma imagem fornecida como data URI.',
+  inputSchema: IdentifyObjectsToolInputSchema,
+  outputSchema: IdentifyObjectsToolOutputSchema,
+};
+
 export const availableTools: ToolDefinition[] = [
-  // Exemplo de como adicionar uma nova ferramenta no futuro:
-  /*
-  {
-    id: 'tool-example',
-    name: 'Example Tool',
-    description: 'A sample tool for demonstration.',
-    inputSchema: z.object({ query: z.string() }),
-    outputSchema: z.object({ result: z.string() }),
-  },
-  */
+  objectIdentifierTool,
 ];
 
 // --- Available Agents (Flows) ---
-// O agente de identificação de objetos foi removido.
+export const objectIdentificationAgent: AgentDefinition = {
+  id: 'agent-object-identifier',
+  name: 'Object Identification Agent',
+  description: 'Um agente que identifica objetos em imagens usando a ferramenta de identificação de objetos.',
+  inputSchema: ObjectIdentificationAgentInputSchema,
+  outputSchema: ObjectIdentificationAgentOutputSchema,
+  associatedTools: [objectIdentifierTool],
+};
+
 export const availableAgents: AgentDefinition[] = [
-  // Exemplo de como adicionar um novo agente no futuro:
-  /*
-  {
-    id: 'agent-example',
-    name: 'Example Agent',
-    description: 'A sample agent that might use the example tool.',
-    inputSchema: z.object({ task: z.string() }),
-    outputSchema: z.object({ outcome: z.string() }),
-    associatedTools: availableTools.filter(t => t.id === 'tool-example'),
-  },
-  */
+  objectIdentificationAgent,
 ];
